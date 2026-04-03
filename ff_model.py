@@ -6,7 +6,18 @@ import statsmodels.api as sm
 from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.rcParams['font.family'] = 'Hiragino Sans'
+import matplotlib.font_manager as fm
+
+# 日本語フォントの設定
+def set_japanese_font():
+    font_list = ['Noto Sans CJK JP', 'IPAGothic', 'TakaoPGothic', 'DejaVu Sans']
+    for font in font_list:
+        if font in [f.name for f in fm.fontManager.ttflist]:
+            matplotlib.rcParams['font.family'] = font
+            return
+    matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+
+set_japanese_font()
 
 # ---------- ページ設定 ----------
 st.set_page_config(
