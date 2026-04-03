@@ -8,17 +8,6 @@ import matplotlib.pyplot as plt
 import matplotlib
 import matplotlib.font_manager as fm
 
-# 日本語フォントの設定
-def set_japanese_font():
-    font_list = ['Noto Sans CJK JP', 'IPAGothic', 'TakaoPGothic', 'DejaVu Sans']
-    for font in font_list:
-        if font in [f.name for f in fm.fontManager.ttflist]:
-            matplotlib.rcParams['font.family'] = font
-            return
-    matplotlib.rcParams['font.family'] = 'DejaVu Sans'
-
-set_japanese_font()
-
 # ---------- ページ設定 ----------
 st.set_page_config(
     page_title="Fama-French Factor Analysis",
@@ -213,20 +202,18 @@ if st.sidebar.button("分析する"):
         st.text(result.summary())
     
     # ---------- グラフ ----------
-    st.subheader("実際の超過リターン vs モデルの予測値")
+    st.subheader("Actual Excess Return vs Predicted Value")
 
     fig, ax = plt.subplots(figsize=(7, 7))
 
-    # 散布図
-    ax.scatter(result.fittedvalues, df["excess_ret"], alpha=0.6, label="各月のデータ")
+    ax.scatter(result.fittedvalues, df["excess_ret"], alpha=0.6, label="Monthly data")
 
-    # y=xの対角線
     min_val = min(result.fittedvalues.min(), df["excess_ret"].min())
     max_val = max(result.fittedvalues.max(), df["excess_ret"].max())
-    ax.plot([min_val, max_val], [min_val, max_val], "r--", label="y = x（完全予測）")
+    ax.plot([min_val, max_val], [min_val, max_val], "r--", label="y = x (Perfect prediction)")
 
-    ax.set_xlabel("モデルの予測値")
-    ax.set_ylabel("実際の超過リターン")
+    ax.set_xlabel("Predicted Value")
+    ax.set_ylabel("Actual Excess Return")
     ax.legend()
     ax.grid(alpha=0.3)
 
