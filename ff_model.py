@@ -34,10 +34,13 @@ end = f"{end_year}-12-31"
 @st.cache_data
 def get_stock_data(ticker, start, end):
     try:
-        px = yf.download(ticker, start=start, end=end, auto_adjust=True)["Close"]
-        if px.empty:
+        data = yf.download(ticker, start=start, end=end, auto_adjust=True, progress=False)
+        if data.empty:
             st.error(f"銘柄 {ticker} のデータが取得できませんでした。ティッカーを確認してください。")
             return None
+        px = data["Close"]
+        if isinstance(px, pd.DataFrame):
+            px = px.iloc[:, 0]
         px_m = px.resample("ME").last()
         ret_m = px_m.pct_change().dropna()
         ret_m.index = ret_m.index.to_period("M")
