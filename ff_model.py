@@ -50,19 +50,28 @@ def get_stock_data(ticker, start, end):
 @st.cache_data
 def get_ff_data(start_year, end_year):
     try:
-        ff = web.DataReader("F-F_Research_Data_Factors", "famafrench", start=f"{start_year}-01-01", end=f"{end_year}-12-31")[0]
-        ff = ff / 100
+        url = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Research_Data_Factors_CSV.zip"
+        ff = pd.read_csv(url, skiprows=3, index_col=0)
+        ff = ff[ff.index.astype(str).str.match(r'^\d{6}$')]
+        ff.index = pd.to_datetime(ff.index, format='%Y%m').to_period('M')
+        ff = ff.astype(float) / 100
+        ff = ff[(ff.index.year >= start_year) & (ff.index.year <= end_year)]
         return ff
     except Exception as e:
         st.error(f"FF3ファクターデータの取得中にエラーが発生しました：{e}")
         return None
 
 
+
 @st.cache_data
 def get_mom_data(start_year, end_year):
     try:
-        mom = web.DataReader("F-F_Momentum_Factor", "famafrench", start=f"{start_year}-01-01", end=f"{end_year}-12-31")[0]
-        mom = mom / 100
+        url = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp/F-F_Momentum_Factor_CSV.zip"
+        mom = pd.read_csv(url, skiprows=13, index_col=0)
+        mom = mom[mom.index.astype(str).str.match(r'^\d{6}$')]
+        mom.index = pd.to_datetime(mom.index, format='%Y%m').to_period('M')
+        mom = mom.astype(float) / 100
+        mom = mom[(mom.index.year >= start_year) & (mom.index.year <= end_year)]
         return mom
     except Exception as e:
         st.error(f"モメンタムデータの取得中にエラーが発生しました：{e}")
