@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import yfinance as yf
-import pandas_datareader.data as web
 import statsmodels.api as sm
 from datetime import datetime
 import matplotlib.pyplot as plt
